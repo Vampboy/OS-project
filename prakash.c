@@ -1,4 +1,6 @@
 //lets startthe game :)
+//comiit
+
 #include<stdio.h>
 #include<semaphore.h>
 #include<string.h>
