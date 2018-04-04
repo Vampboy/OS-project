@@ -1,6 +1,5 @@
 //lets startthe game :)
-//comiit
-
+//NEW Commit
 #include<stdio.h>
 #include<semaphore.h>
 #include<string.h>
@@ -56,35 +55,43 @@ for(int i=0;i<size;i++)
 
 int min_av_student=1000,stud_loc,min_turn=100;
 void pro_min_student()
-{
+{min_av_student=1000;
+    min_turn=1;
     for(int i=0;i<stud_size;i++)
     {
         if(min_av_student>stud_que[i].ar_time && min_turn>=stud_que[i].turn)
         {
                 min_av_student=stud_que[i].ar_time;
                 stud_loc=i;
+                min_turn=stud_que[i].turn;
         }
 
     }
+
+   // cout<<stud_que[stud_loc].person_name<<endl;
 }
 
 int min_av_teacher=1000,tech_loc;
 void pro_min_teacher()
 {
+    min_av_teacher=1000;
+    min_turn=1;
     for(int i=0;i<tech_size;i++)
     {
-        if(min_av_teacher>tech_que[i].ar_time)
+        if(min_av_teacher>tech_que[i].ar_time && min_turn>=stud_que[i].turn)
         {
                 min_av_teacher=tech_que[i].ar_time;
                 tech_loc=i;
+                min_turn=tech_que[i].turn;
                 printf("yoo\n");
         }
 
     }
+    //cout<<tech_que[tech_loc].person_name<<endl;
 }
-int quantom=20;
+int quantom=20,size;
 
-void remove_element(struct que * temp;)
+void remove_element(struct que * temp)
 {
     int i=0;
     if(temp->priority==2)
@@ -99,7 +106,7 @@ void remove_element(struct que * temp;)
                 i++;
             }
         //else
-            //size--;
+            stud_size--;
     }
     if(temp->priority==1)
     {   
@@ -113,7 +120,7 @@ void remove_element(struct que * temp;)
                 i++;
             }
         //else
-            //size--;
+            tech_size--;
     }
 
 }
@@ -123,23 +130,25 @@ void *pro(struct que *temp)
     printf("%s your turn is here \n",temp->person_name);    
     
 
+        sleep(2);
     if ((temp->bt_time > 0))  
     {
         temp->bt_time -= quantom;
         if (temp->bt_time < 0) 
         {
             temp->bt_time=0;
-            printf("your quere is completly executed :\n");
-            remove_element(&temp);
-            size--;
+            printf("%s quere is completly executed :\n",temp->person_name);
+            remove_element(temp);
+            //size--;
         }
         else
         {
-            printf("your quere is to big Wait for Your next turn\n");
+            printf("%d",temp->bt_time);
+            printf("%s quere is to big Wait for Your next turn\n",temp->person_name);
             temp->turn++;
         
         }
-
+        sleep(2);
        
     }
      pthread_exit(NULL);
@@ -216,23 +225,32 @@ int main()
         pro_min_student();
         pro_min_teacher();
 
-        printf("%d %d \n",min_av_student,min_av_teacher);
-
-        while(tech_size+1!=0&&stud_size+1!=0)
+        
+        while(tech_size!=0||stud_size!=0)
         {
+            printf("%d %d \n",min_av_student,min_av_teacher);
+
             if(min_av_student<min_av_teacher)
             {
                 pthread_create(&p1,NULL,pro,(void *)&stud_que[stud_loc]);
                 pthread_join(p1,NULL);
-                stud_size--;
+                //stud_size--;
             }
-            else if(min_av_student==min_av_teacher)
+            else 
             {
                 pthread_create(&p1,NULL,pro,(void *)&tech_que[tech_loc]);
                 pthread_join(p1,NULL);
-                tech_size--;
+               // tech_size--;
 
             }
+
+             print_data(stud_que,stud_size);
+            print_data(tech_que,tech_size);
+            printf("%d\n",stud_size);
+            printf("%d\n",tech_size);
+            pro_min_student();
+            pro_min_teacher();
+
         }
     }
     else
