@@ -1,7 +1,11 @@
-//lets startthe game :)
-//NEW Commit
+/*Sudesh Sharma is a Linux expert who wants to have an online system where he can handle student queries. Since there 
+can be multiple requests at any time he wishes to dedicate a fixed amount of time to every request so that everyone 
+gets a fair share of his time. He will log into the system from 10am to 12am only. He wants to have separate requests 
+queues for students and faculty, where faculty quese is given a higher priority. Implement a strategy for the same. 
+The summary at the end of the session should include the total time he spent on handling queries and average
+query time.*/
+
 #include<stdio.h>
-#include<semaphore.h>
 #include<string.h>
 #include<pthread.h>
 #include<stdlib.h>
@@ -30,6 +34,8 @@ void gettime()
     timeinfo = localtime ( &rawtime );
 
 }
+
+
 int check=0;
 void check_time()
 {
@@ -83,7 +89,7 @@ void pro_min_teacher()
                 min_av_teacher=tech_que[i].ar_time;
                 tech_loc=i;
                 min_turn=tech_que[i].turn;
-                printf("yoo\n");
+                //printf("yoo\n");
         }
 
     }
@@ -101,7 +107,9 @@ void remove_element(struct que * temp)
 
         if(i!=stud_size)
             while(i<stud_size-1)
-            {   stud_que[i].ar_time=stud_que[i+1].ar_time;
+            {   
+                strcpy(stud_que[i].person_name,stud_que[i+1].person_name);
+                stud_que[i].ar_time=stud_que[i+1].ar_time;
                 stud_que[i].bt_time=stud_que[i+1].bt_time;
                 i++;
             }
@@ -115,7 +123,9 @@ void remove_element(struct que * temp)
 
         if(i!=tech_size)
             while(i<tech_size-1)
-            {   tech_que[i].ar_time=tech_que[i+1].ar_time;
+            {
+                strcpy(tech_que[i].person_name,tech_que[i+1].person_name);
+                tech_que[i].ar_time=tech_que[i+1].ar_time;
                 tech_que[i].bt_time=tech_que[i+1].bt_time;
                 i++;
             }
@@ -134,7 +144,7 @@ void *pro(struct que *temp)
     if ((temp->bt_time > 0))  
     {
         temp->bt_time -= quantom;
-        if (temp->bt_time < 0) 
+        if (temp->bt_time <=0) 
         {
             temp->bt_time=0;
             printf("%s quere is completly executed :\n",temp->person_name);
@@ -143,7 +153,7 @@ void *pro(struct que *temp)
         }
         else
         {
-            printf("%d",temp->bt_time);
+            //printf("%d",temp->bt_time);
             printf("%s quere is to big Wait for Your next turn\n",temp->person_name);
             temp->turn++;
         
@@ -184,14 +194,14 @@ int main()
             if(strcmp(position,"student")==0||strcmp(position,"STUDENT")==0)
             {
                 temp=&stud_que[stud_size];
-                printf("helo\n");
+                //printf("helo\n");
                 stud_size++;
                 temp->priority=2;
             }
             else if(strcmp(position,"teacher")==0||strcmp(position,"TEACHER")==0)
             {
                 temp=&tech_que[tech_size];
-                printf("yoo\n");
+                //printf("yoo\n");
                 tech_size++;
                 temp->priority=1;
             }
@@ -214,10 +224,10 @@ int main()
                      
 
         }
-        print_data(stud_que,stud_size);
-        print_data(tech_que,tech_size);
-        printf("%d\n",stud_size);
-        printf("%d\n",tech_size);
+        //print_data(stud_que,stud_size);
+        //print_data(tech_que,tech_size);
+        //printf("%d\n",stud_size);
+        //printf("%d\n",tech_size);
         
 
         printf("Wait till we call your name: \n");
@@ -228,7 +238,8 @@ int main()
         
         while(tech_size!=0||stud_size!=0)
         {
-            printf("%d %d \n",min_av_student,min_av_teacher);
+            sleep(2);
+            //printf("%d %d \n",min_av_student,min_av_teacher);
 
             if(min_av_student<min_av_teacher)
             {
@@ -244,10 +255,10 @@ int main()
 
             }
 
-             print_data(stud_que,stud_size);
-            print_data(tech_que,tech_size);
-            printf("%d\n",stud_size);
-            printf("%d\n",tech_size);
+            // print_data(stud_que,stud_size);
+            //print_data(tech_que,tech_size);
+            //printf("%d\n",stud_size);
+            //printf("%d\n",tech_size);
             pro_min_student();
             pro_min_teacher();
 
