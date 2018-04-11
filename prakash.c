@@ -6,6 +6,7 @@ The summary at the end of the session should include the total time he spent on 
 query time.*/
 
 #include<stdio.h>
+#include<fcntl.h>
 #include<string.h>
 #include<pthread.h>
 #include<stdlib.h>
@@ -38,14 +39,14 @@ struct que stud_que[10],tech_que[10];
 //function to get the system current time
 void gettime()
 {
-    time_t rawtime;
+    time_t cur_time;
 
-    time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
+    time ( &cur_time );
+    timeinfo = localtime ( &cur_time );
 
 }
 
-//function to check for the valid time to be loggeg in 1 for ture else 0
+//function to check for the valid time to be logged in 1 for true else 0
 void check_time()
 {
     gettime();
@@ -59,7 +60,7 @@ void check_time()
 //function will print all the detailes of the queres
 void print_data(struct que a[],int size)
 {
-    printf("sr_no.\tName\t\tPosition\tArrival_time\tRemaining_Burst_time\tturn\n");
+    printf("sr_no.\tName\t\tPosition\tArrival_time\tRemaining_Burst_time\n");
     char buff[20];
     if(a[0].priority==1)
         strcpy(buff,"Student");
@@ -69,7 +70,7 @@ void print_data(struct que a[],int size)
     for(int i=0;i<size;i++)
     {
         
-        printf("%-6d  %-15s %-15s %-15d %-15d %-10d\n",i+1,a[i].person_name,buff,a[i].ar_time,a[i].bt_time,a[i].turn);
+        printf("%-6d  %-15s %-15s %-15d %-15d\n",i+1,a[i].person_name,buff,a[i].ar_time,a[i].bt_time);
     }
 
 
@@ -87,14 +88,9 @@ void pro_min_student()
                 min_av_student=stud_que[i].ar_time;
                 stud_loc=i;
                 min_turn=stud_que[i].turn;
-
-               // printf("%d",stud_loc);
-                //printf("yp\n");
         }
 
     }
-
-   // cout<<stud_que[stud_loc].person_name<<endl;
 }
 
 //funtion will find the best nxt teacher quere for execution check both arrival time , burst time and repeation of queres 
@@ -110,11 +106,9 @@ void pro_min_teacher()
                 min_av_teacher=tech_que[i].ar_time;
                 tech_loc=i;
                 min_turn=tech_que[i].turn;
-                //printf("yoo\n");
         }
 
     }
-    //cout<<tech_que[tech_loc].person_name<<endl;
 }
 
 //function will remove the specified node fromm the que array
@@ -134,7 +128,6 @@ void remove_element(struct que * temp)
                 stud_que[i].bt_time=stud_que[i+1].bt_time;
                 i++;
             }
-        //else
             stud_size--;
     }
     if(temp->priority==1)
@@ -150,7 +143,6 @@ void remove_element(struct que * temp)
                 tech_que[i].bt_time=tech_que[i+1].bt_time;
                 i++;
             }
-        //else
             tech_size--;
     }
 
@@ -164,7 +156,7 @@ void *pro(struct que *temp)
     printf("\" %s \" your turn is here \n",temp->person_name);    
     
     sleep(4);
-    printf("\n\nProcessing your request\n\n");
+    printf("\n\nProcessing your request\n\n\n");
     sleep(4);
     if ((temp->bt_time > 0))  
     {
@@ -175,12 +167,10 @@ void *pro(struct que *temp)
             temp->bt_time=0;
             printf("\" %s \" quere is completly executed :\n",temp->person_name);
             remove_element(temp);
-            //size--;
         }
         else
         {
             timer+=quantom;
-            //printf("%d",temp->bt_time);
             printf("\nSorry for the inconvinance \n");
             printf("\" %s \" quere is to big you Wait for Your next turn\n",temp->person_name);
             temp->turn++;
@@ -200,17 +190,17 @@ int main()
 
     int Total_quere_time=0,Quere_count=0;
     float avg_quere_time=0;
-    //check_time();
-    check=1;
+    check_time();       //for dynamic use in real time
+    //check=1;      //for static use
     system("clear");
     printf("Suresh Welcome To Online Quere System:\n");
-    sleep(3);
+    sleep(2);
     system("clear");
     printf("Logging in .\n");
-    sleep(2);
+    sleep(1);
     system("clear");
     printf("Logging in . .\n");
-    sleep(2);
+    sleep(1);
     system("clear");
     printf("Logging in . . .\n");
         
@@ -222,6 +212,8 @@ int main()
         sleep(2);
         system("clear");
         printf("Logged In Succesfull\n");
+        char buff[80];
+        strcpy(buff,"/home/vampboy/OS-project/Q_record.txt");
         while(flag1)
         {
             char name[20],position[20];
@@ -245,14 +237,12 @@ int main()
             if(strcmp(position,"student")==0||strcmp(position,"STUDENT")==0)
             {
                 temp=&stud_que[stud_size];
-                //printf("helo\n");
                 stud_size++;
                 temp->priority=2;
             }
             else if(strcmp(position,"teacher")==0||strcmp(position,"TEACHER")==0)
             {
                 temp=&tech_que[tech_size];
-                //printf("yoo\n");
                 tech_size++;
                 temp->priority=1;
             }
@@ -263,11 +253,31 @@ int main()
             strcpy(temp->person_name,name);
             temp->turn=1;
 
+            //uploading quere to server 
+            {
+                int a=open(buff,O_APPEND|O_RDWR,0777);
+                if(a<0)
+                {
+                    printf("Cannot open the file \n");
+
+                }
+                else
+                {
+                    int c=write(a,(void*)temp,sizeof(struct que));
+                    if(c<0)
+                    {
+                        printf("cannt upload file to server\n");
+                    }
+                    
+                }
+                close(a);
+            }
+
             Total_quere_time+=burst_time;
             Quere_count++;
 
 
-            printf("\n\nAdd another form(Y/N)\n");
+            printf("\n\nAdd another form(Y/N):- ");
             char ch;
             scanf("%c",&ch);
             scanf("%c",&ch);
@@ -280,21 +290,17 @@ int main()
         }
         system("clear");
 
-        //printing of quere table 
         printf("List Of the Student Quere Submitted\n\n");
         print_data(stud_que,stud_size);
         printf("\n\nList Of the Teacher Quere Submitted\n\n");
         print_data(tech_que,tech_size);
-        //printf("%d\n",stud_size);
-        //printf("%d\n",tech_size);
-        
-        printf("NOTE:- Every Quere will be given 20 time Quantum:-\n");
+        printf("\n\nNOTE:- Every Quere will be given 20 time Quantum:-\n");
 
         printf("\n\nWait till we call your name: \n\n ");
 
         pro_min_student();
         pro_min_teacher();
-        sleep(6);
+        sleep(4);
 
         if(min_av_student<min_av_teacher )
             {
@@ -308,29 +314,27 @@ int main()
         //calling quere according to there priority and arrival time
         while(tech_size!=0||stud_size!=0)
         {
-
-            //printf("%d %d \n",min_av_student,min_av_teacher);
-
-            
-
+          
             if(timer>=min_av_teacher)
             {
                 pthread_create(&p1,NULL,pro,(void *)&tech_que[tech_loc]);
                 pthread_join(p1,NULL);
-                //stud_size--;
             }
             else 
             {
                 pthread_create(&p1,NULL,pro,(void *)&stud_que[stud_loc]);
                 pthread_join(p1,NULL);
-               // tech_size--;
 
             }
 
-            //print_data(stud_que,stud_size);
-            //print_data(tech_que,tech_size);
-            //printf("%d\n",stud_size);
-            //printf("%d\n",tech_size);
+            system("clear");
+            printf("Updated query list \n\n");
+
+            printf("List Of the Student Quere Submitted\n\n");
+            print_data(stud_que,stud_size);
+            printf("\n\nList Of the Teacher Quere Submitted\n\n");
+            print_data(tech_que,tech_size);
+            sleep(3);
             pro_min_student();
             pro_min_teacher();
 
@@ -339,8 +343,38 @@ int main()
         sleep(3);
         system("clear");
         printf("Todays quere taking session has been Ended \n");
+        printf("List Of the Student Quere Submitted\n\n");
+
+        //downloading quere from server
+        struct que *temp;
+        int open_file=open(buff,O_RDONLY,0777);
+        if(open_file<0)
+        {
+            printf("Cannot open the file \n");
+        }
+        else
+        {
+            int read_file;
+            int count=1;
+            printf("sr_no.\tName\t\tPosition\tArrival_time\tBurst_time\n");  
+            while(read_file=read(open_file,(void*)temp,sizeof(struct que))>0) 
+            {
+               char buff[20];
+                if(temp->priority==1)
+                    strcpy(buff,"Student");
+                else
+                    strcpy(buff,"Teacher");    
+
+                printf("%-6d  %-15s %-15s %-15d %-15d\n",count,temp->person_name,buff,temp->ar_time,temp->r_time);
+                count++;
+            }
+            
+        }
+        close(open_file);
+        
+
         printf("\n\nTotal quere taken today = %d \n\nTotal quere time = %d\n\nAverage quere time = %f\n",Quere_count,Total_quere_time,avg_quere_time);
-        sleep(3);
+        sleep(4);
         system("clear");
         printf("Logging out .\n");
         sleep(2);
@@ -351,9 +385,8 @@ int main()
         printf("Logging out . . .\n");
         sleep(2);
         system("clear");
-        printf("Logged out\n");
-        
-        
+        printf("Logged out\n");        
+        return 0;
     
     }
     else
@@ -361,7 +394,7 @@ int main()
             system("clear");
             printf("log In Unsucessfull\n\n");
             printf("Cannt login during this time of day\n");
-
+            return 0;
         }
 
 }
