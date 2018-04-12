@@ -82,12 +82,24 @@ void pro_min_student()
     min_turn=10;
     for(int i=0;i<stud_size;i++)
     {
-        if(stud_que[i].bt_time>0 && min_turn>stud_que[i].turn)
-        if(min_av_student>=stud_que[i].ar_time)
+        if(stud_que[i].bt_time>0)
+        if( min_turn<=stud_que[i].turn || i==0)
+        {            
+            if(min_av_student>=stud_que[i].ar_time)
+            {
+                    min_av_student=stud_que[i].ar_time;
+                    stud_loc=i;
+                    min_turn=stud_que[i].turn;
+            }
+        }
+        else
         {
+            if(stud_que[i].ar_time<timer)
+            {
                 min_av_student=stud_que[i].ar_time;
                 stud_loc=i;
-                min_turn=stud_que[i].turn;
+                min_turn=stud_que[i].turn;   
+            }
         }
 
     }
@@ -101,11 +113,23 @@ void pro_min_teacher()
     for(int i=0;i<tech_size;i++)
     {   
         if(tech_que[i].bt_time>0)
-        if(min_av_teacher>=tech_que[i].ar_time && min_turn>stud_que[i].turn)
+        if( min_turn<=tech_que[i].turn || i==0)
         {
+            if(min_av_teacher>=tech_que[i].ar_time )
+            {
+                            
                 min_av_teacher=tech_que[i].ar_time;
                 tech_loc=i;
                 min_turn=tech_que[i].turn;
+                
+            }
+        }
+        else
+        if(tech_que[i].ar_time<timer)
+        {
+            min_av_teacher=tech_que[i].ar_time;
+            tech_loc=i;
+            min_turn=tech_que[i].turn;   
         }
 
     }
@@ -152,7 +176,7 @@ void remove_element(struct que * temp)
 //function will execute the que and update the que status
 void *pro(struct que *temp)
 {
-    //system("clear");
+    system("clear");
     printf("\" %s \" your turn is here \n",temp->person_name);    
     
     sleep(4);
@@ -194,14 +218,14 @@ int main()
     check=1;      //for static use
     system("clear");
     printf("Suresh Welcome To Online Quere System:\n");
-    //sleep(2);
-    //system("clear");
-    //printf("Logging in .\n");
-    //sleep(1);
-   // system("clear");
-    //printf("Logging in . .\n");
-    //sleep(1);
-    //system("clear");
+    sleep(2);
+    system("clear");
+    printf("Logging in .\n");
+    sleep(1);
+    system("clear");
+    printf("Logging in . .\n");
+    sleep(1);
+    system("clear");
     printf("Logging in . . .\n");
         
 
@@ -210,7 +234,7 @@ int main()
     {
         int flag1=1;
         sleep(2);
-        //system("clear");
+        system("clear");
         printf("Logged In Succesfull\n");
         char buff[80];
         strcpy(buff,"/home/vampboy/OS-project/Q_record.txt");
@@ -219,7 +243,7 @@ int main()
             char name[20],position[20];
             int arival_time,burst_time;
             sleep(1);
-            //system("clear");
+            system("clear");
             //taking quere from the user
             printf("Welcome to Quere Solutions\n");       
             printf("\nEnter the  quere details in the form:\n");
@@ -288,7 +312,7 @@ int main()
                      
 
         }
-       // system("clear");
+        system("clear");
 
         printf("List Of the Student Quere Submitted\n\n");
         print_data(stud_que,stud_size);
@@ -315,7 +339,7 @@ int main()
         while(tech_size!=0||stud_size!=0)
         {
           
-            if(timer>=min_av_teacher)
+            if(timer>=min_av_teacher && tech_size!=0)
             {
                 pthread_create(&p1,NULL,pro,(void *)&tech_que[tech_loc]);
                 pthread_join(p1,NULL);
@@ -327,7 +351,7 @@ int main()
 
             }
 
-            //system("clear");
+            system("clear");
             printf("Updated query list \n\n");
 
             printf("List Of the Student Quere Submitted\n\n");
@@ -341,7 +365,7 @@ int main()
         }
         avg_quere_time=Total_quere_time/Quere_count;
         sleep(3);
-        //system("clear");
+        system("clear");
         printf("Todays quere taking session has been Ended \n");
         printf("List Of the Student Quere Submitted\n\n");
 
@@ -374,17 +398,17 @@ int main()
         
 
         printf("\n\nTotal quere taken today = %d \n\nTotal quere time = %d\n\nAverage quere time = %f\n",Quere_count,Total_quere_time,avg_quere_time);
-        //sleep(4);
-        //system("clear");
-        //printf("Logging out .\n");
-        //sleep(2);
-        //system("clear");
-        //printf("Logging out . .\n");
-        //sleep(2);
-        //system("clear");
+        sleep(4);
+        system("clear");
+        printf("Logging out .\n");
+        sleep(2);
+        system("clear");
+        printf("Logging out . .\n");
+        sleep(2);
+        system("clear");
         printf("Logging out . . .\n");
-        //sleep(2);
-        //system("clear");
+        sleep(2);
+        system("clear");
         printf("Logged out\n");        
         return 0;
     
