@@ -62,7 +62,7 @@ void print_data(struct que a[],int size)
 {
     printf("sr_no.\tName\t\tPosition\tArrival_time\tRemaining_Burst_time\n");
     char buff[20];
-    if(a[0].priority==1)
+    if(a[0].priority==2)
         strcpy(buff,"Student");
     else
         strcpy(buff,"Teacher");    
@@ -152,7 +152,7 @@ void remove_element(struct que * temp)
 //function will execute the que and update the que status
 void *pro(struct que *temp)
 {
-    system("clear");
+    //system("clear");
     printf("\" %s \" your turn is here \n",temp->person_name);    
     
     sleep(4);
@@ -190,18 +190,18 @@ int main()
 
     int Total_quere_time=0,Quere_count=0;
     float avg_quere_time=0;
-    check_time();       //for dynamic use in real time
-    //check=1;      //for static use
+    //check_time();       //for dynamic use in real time
+    check=1;      //for static use
     system("clear");
     printf("Suresh Welcome To Online Quere System:\n");
-    sleep(2);
-    system("clear");
-    printf("Logging in .\n");
-    sleep(1);
-    system("clear");
-    printf("Logging in . .\n");
-    sleep(1);
-    system("clear");
+    //sleep(2);
+    //system("clear");
+    //printf("Logging in .\n");
+    //sleep(1);
+   // system("clear");
+    //printf("Logging in . .\n");
+    //sleep(1);
+    //system("clear");
     printf("Logging in . . .\n");
         
 
@@ -210,7 +210,7 @@ int main()
     {
         int flag1=1;
         sleep(2);
-        system("clear");
+        //system("clear");
         printf("Logged In Succesfull\n");
         char buff[80];
         strcpy(buff,"/home/vampboy/OS-project/Q_record.txt");
@@ -219,7 +219,7 @@ int main()
             char name[20],position[20];
             int arival_time,burst_time;
             sleep(1);
-            system("clear");
+            //system("clear");
             //taking quere from the user
             printf("Welcome to Quere Solutions\n");       
             printf("\nEnter the  quere details in the form:\n");
@@ -288,7 +288,7 @@ int main()
                      
 
         }
-        system("clear");
+       // system("clear");
 
         printf("List Of the Student Quere Submitted\n\n");
         print_data(stud_que,stud_size);
@@ -327,7 +327,7 @@ int main()
 
             }
 
-            system("clear");
+            //system("clear");
             printf("Updated query list \n\n");
 
             printf("List Of the Student Quere Submitted\n\n");
@@ -341,7 +341,7 @@ int main()
         }
         avg_quere_time=Total_quere_time/Quere_count;
         sleep(3);
-        system("clear");
+        //system("clear");
         printf("Todays quere taking session has been Ended \n");
         printf("List Of the Student Quere Submitted\n\n");
 
@@ -360,7 +360,7 @@ int main()
             while(read_file=read(open_file,(void*)temp,sizeof(struct que))>0) 
             {
                char buff[20];
-                if(temp->priority==1)
+                if(temp->priority==2)
                     strcpy(buff,"Student");
                 else
                     strcpy(buff,"Teacher");    
@@ -374,17 +374,17 @@ int main()
         
 
         printf("\n\nTotal quere taken today = %d \n\nTotal quere time = %d\n\nAverage quere time = %f\n",Quere_count,Total_quere_time,avg_quere_time);
-        sleep(4);
-        system("clear");
-        printf("Logging out .\n");
-        sleep(2);
-        system("clear");
-        printf("Logging out . .\n");
-        sleep(2);
-        system("clear");
+        //sleep(4);
+        //system("clear");
+        //printf("Logging out .\n");
+        //sleep(2);
+        //system("clear");
+        //printf("Logging out . .\n");
+        //sleep(2);
+        //system("clear");
         printf("Logging out . . .\n");
-        sleep(2);
-        system("clear");
+        //sleep(2);
+        //system("clear");
         printf("Logged out\n");        
         return 0;
     
